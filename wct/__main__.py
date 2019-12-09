@@ -1,9 +1,11 @@
+from PIL import Image
 import numpy as np
-import cv2
 from tensorflow.keras.applications import VGG19
 
-img = cv2.imread('images/valencia.png')
+im = Image.open('images/valencia.png')
+pixels = np.array(im) / 255
+
 encoder = VGG19()
 
-features = encoder.predict(np.array([img]))
+features = encoder.predict(np.array([pixels]))
 print(features[0])
