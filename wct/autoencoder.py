@@ -1,31 +1,26 @@
-from tensorflow.keras import Sequential
+from tensorflow.keras import Model, Sequential
 from tensorflow.keras.layers import Input, Conv2D, UpSampling2D
-from tensorflow.keras.applications import VGG19 as encoder
+from tensorflow.keras.applications import VGG19
 
-# from tensorflow.keras.models import Model
-# from tensorflow.keras.layers import Input, UpSampling2D, Lambda
+encoder = VGG19(include_top=False)
+encoder.trainable = False
+# encoder.summary()
 
-e = encoder(include_top=False)
-e.summary()
+layer_output = encoder.get_layer('block3_conv1').output
 
-decoder = Sequential()
-
-
-decoder.add(Input(shape=(None, None, 256)))
-
-# hook into relu_3_1
 # block 3
-decoder.add(Conv2D(128, (3, 3), activation='relu'))
-decoder.add(UpSampling2D(interpolation='nearest'))
-decoder.add(Conv2D(128, (3, 3), activation='relu'))
+x = Conv2D(128, (3, 3), activation='relu', name='dec_block3_conv1')(layer_output)
+x = UpSampling2D(interpolation='nearest', name='dec_block3_upsample')(x)
+x = Conv2D(128, (3, 3), activation='relu', name='dec_block3_conv2')(x)
 
 # block 2
-decoder.add(Conv2D(64, (3, 3), activation='relu'))
-decoder.add(UpSampling2D(interpolation='nearest'))
+x = Conv2D(64, (3, 3), activation='relu', name='dec_block2_conv1')(x)
+x = UpSampling2D(interpolation='nearest', name='dec_block2_upsample')(x)
 
 # block 1
-decoder.add(Conv2D(64, (3, 3), activation='relu'))
+x = Conv2D(64, (3, 3), activation='relu', name='dec_block1_conv1')(x)
+x = UpSampling2D(interpolation='nearest', name='dec_block1_upsample')(x)
 
-decoder.build()
-
-decoder.summary()
+autoencoder = Model(encoder.input, outputs=[layer_output, x])
+autoencoder.build((224, 224))
+autoencoder.summary()
