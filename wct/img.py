@@ -13,5 +13,5 @@ def resize(image):
     target_size = 224
     dim = min(image.shape[:-1])
     image = image[0:dim, 0:dim]
-    image = cv2.resize(image, (target_size, target_size))
+    image = cv2.resize(image, (target_size, target_size), interpolation=cv2.INTER_LINEAR)
     return image
