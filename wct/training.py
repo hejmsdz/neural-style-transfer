@@ -4,7 +4,7 @@ import tensorflow as tf
 from tensorflow.keras.callbacks import ModelCheckpoint
 import numpy as np
 from .autoencoder import autoencoder
-from .img import imread
+from .img import imread, resize
 
 def training_images(paths, batch_size, epochs=1):
     batches = [paths[pos : pos + batch_size] for pos in range(0, len(paths), batch_size)]
@@ -23,9 +23,9 @@ def save_checkpoints():
 
 if __name__ == '__main__':
     autoencoder.compile(optimizer='adam', loss='mse')
-    paths = glob.glob('images/*.png')
-    epochs = 5
-    batch_size = 3
+    paths = glob.glob('images/train/*.jpg')
+    epochs = 10
+    batch_size = 10
     options = {
         'epochs': epochs,
         'steps_per_epoch': len(paths) / batch_size,
