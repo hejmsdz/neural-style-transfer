@@ -8,6 +8,7 @@ def imread(filename):
 def imshow(image, title='image'):
     rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     plt.imshow(rgb)
+    plt.show()
 
 def resize(image):
     target_size = 224
