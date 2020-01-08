@@ -40,7 +40,7 @@ def create_decoder(block):
         ],
         1: [
             ReflectingConv2D(64, (3, 3), activation='relu', name='dec_block1_conv1'),
-            ReflectingConv2D(3, 3, activation='sigmoid', name='dec_output')
+            ReflectingConv2D(3, 3, activation=None, name='dec_output')
         ]
     }
 

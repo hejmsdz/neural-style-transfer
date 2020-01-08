@@ -2,7 +2,6 @@ import glob
 import itertools
 import numpy as np
 from tensorflow.keras.callbacks import ModelCheckpoint
-from tensorflow.keras.applications.vgg19 import preprocess_input
 from .autoencoder import create_autoencoder, chain_models
 from .img import imread, resize
 
@@ -10,8 +9,7 @@ def training_images(paths, batch_size, epochs=1):
     batches = [paths[pos : pos + batch_size] for pos in range(0, len(paths), batch_size)]
     for _ in range(epochs):
         for batch in batches:
-            images = 255 * np.array([imread(path) for path in batch])
-            images = preprocess_input(images)
+            images = np.array([imread(path) for path in batch])
             yield images, images
 
 def save_checkpoints(block):
