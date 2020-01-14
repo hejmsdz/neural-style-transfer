@@ -1,5 +1,4 @@
 import glob
-import itertools
 import numpy as np
 from tensorflow.keras.callbacks import ModelCheckpoint
 from .autoencoder import create_autoencoder, chain_models
@@ -40,6 +39,6 @@ def train(block):
     autoencoder.fit_generator(generator, **options)
 
 if __name__ == '__main__':
-    for i in [1,2,3,4,5]:
+    for i in [5,4,3]:
         train(i)
     
