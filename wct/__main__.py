@@ -1,14 +1,21 @@
 import numpy as np
-import os.path
-import glob
+from tensorflow.keras.applications.vgg19 import preprocess_input
+from .autoencoder import create_autoencoder, chain_models, transform
 from .img import imread, imshow
-from .autoencoder import autoencoder
 
-weights_file = 'models/autoencoder.h5'
-if os.path.exists(weights_file):
-    autoencoder.load_weights(weights_file)
+encoder, decoder = create_autoencoder(3)
+autoencoder = chain_models([encoder, decoder])
+autoencoder.load_weights('models/decoder3.h5')
 
-for path in glob.glob('images/*.png'):
-    im = imread(path)
-    out = autoencoder.predict(np.array([im]))[0]
-    imshow(np.column_stack([im, out]), 'autoencoder output')
+img = imread('images/pasta.png')
+out = transform(autoencoder, img)
+print(out)
+imshow(out)
+
+# fmap = transform(encoder, img)
+# print(fmap)
+
+# decoder.load_weights('models/decoder0.h5')
+# rebuilt = transform(decoder, fmap)
+# 
+# print(rebuilt)
