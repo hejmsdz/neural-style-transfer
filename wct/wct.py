@@ -8,7 +8,7 @@ from .img import imread, imshow
 
 class WCT:
     def __init__(self):
-        self.blocks = [1, 2, 3, 4, 5]
+        self.blocks = [1, 2, 3]
         self.autoencoders = []
         self.load_autoencoders()
     
@@ -33,11 +33,11 @@ class WCT:
         for block in self.blocks:
             encoder, decoder = create_autoencoder(block)
             autoencoder = chain_models([encoder, decoder])
-            autoencoder.load_weights(f"models/decoder{block}.h5")
+            autoencoder.load_weights(f"models/21-01-2020/decoder{block}.h5")
             self.autoencoders.append((encoder, decoder))
     
     def test_autoencoders(self):
-        img = imread('images/pasta.png')
+        img = imread('lena.png')
         for block in self.blocks:
             feature_map = self.encode(block, img)
             reconstruction = self.decode(block, feature_map)
@@ -83,7 +83,7 @@ if __name__ == '__main__':
     rows = []
     for style_path in glob.glob('styles/*.jpg'):
         style = imread(style_path)
-        content = imread('/Users/mikolaj/Pictures/profilowka.jpg')
+        content = imread('lena.png')
         result = wct.stylize(style, content, block=2)
         rows.append(np.column_stack([style, result]))
     results = np.row_stack(rows)

@@ -13,7 +13,7 @@ def training_images(paths, batch_size, epochs=1):
 
 def save_checkpoints(block):
     return ModelCheckpoint(
-        f"models/decoder{block}.h5",
+        f"models/26-01-2020/decoder{block}.h5",
         monitor='loss',
         save_best_only=True,
         save_weights_only=True
@@ -22,8 +22,8 @@ def save_checkpoints(block):
 def train(block):
     print(f"Training decoder at block {block}")
     encoder, decoder = create_autoencoder(block)
-    encoder.build((224, 224, 3))
-    decoder.build((56, 56, 256))
+    # encoder.build((224, 224, 3))
+    # decoder.build((56, 56, 256))
     autoencoder = chain_models([encoder, decoder])
 
     autoencoder.compile(optimizer='adam', loss='mse')
@@ -39,6 +39,6 @@ def train(block):
     autoencoder.fit_generator(generator, **options)
 
 if __name__ == '__main__':
-    for i in [5,4,3]:
+    for i in [5,4,3,2,1]:
         train(i)
     
