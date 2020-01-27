@@ -39,6 +39,6 @@ def train(block):
     autoencoder.fit_generator(generator, **options)
 
 if __name__ == '__main__':
-    for i in [5,4,3,2,1]:
+    for i in [5]:
         train(i)
     
