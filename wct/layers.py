@@ -1,32 +1,40 @@
 import h5py
-import tensorflow as tf
-from keras.layers import Lambda, Conv2D
-
-from keras.layers import Input, Conv2D, UpSampling2D, Reshape, Concatenate
 import keras
-from keras.layers import Lambda
-import keras.backend as K
-from keras.models import Model
-from keras.layers import Conv2D, MaxPooling2D, GlobalMaxPooling2D, Input
-from keras.layers import Input, Conv2D, UpSampling2D
-from keras.utils.data_utils import get_file
 import keras.backend as K
 import numpy as np
 import tensorflow as tf
-from keras.utils import plot_model
+from keras.layers import Input, Conv2D, UpSampling2D
+from keras.layers import Lambda
+from keras.layers import MaxPooling2D
+from keras.layers import Reshape, Concatenate
+from keras.models import Model
 
 WEIGHTS_PATH_NO_TOP = ('https://github.com/fchollet/deep-learning-models/'
                        'releases/download/v0.1/'
                        'vgg19_weights_tf_dim_ordering_tf_kernels_notop.h5')
 
-
 # def unpool(args):
 #     mask, x = args
 #     return keras.layers.multiply([mask, x])
 
+
+upsample2x2 = UpSampling2D((2, 2))
+
+
+# def unpool(args):
+#     x, input_mask = args
+#     x = upsample2x2(x)
+#
+#     output_mask = np.zeros(x.shape[1] * x.shape[2])
+#     output_mask[input_mask] = 1.
+#     output_mask = output_mask.reshape(x.shape)
+#
+#     return tf.multiply(x, output_mask)
+
+
 def unpool(args):
-    mask, x = args
-    return keras.layers.multiply([mask, UpSampling2D()(x)])
+    x, input_mask = args
+    return keras.layers.multiply([input_mask, UpSampling2D()(x)])
 
 
 def mask_make(x, orig):
