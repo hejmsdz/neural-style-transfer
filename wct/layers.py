@@ -1,12 +1,11 @@
 import h5py
 import tensorflow as tf
-from tensorflow.keras.layers import Lambda, Conv2D
+from keras.layers import Lambda, Conv2D
 
 from keras.layers import Input, Conv2D, UpSampling2D, Reshape, Concatenate
 import keras
 from keras.layers import Lambda
 import keras.backend as K
-import tensorflow as tf
 from keras.models import Model
 from keras.layers import Conv2D, MaxPooling2D, GlobalMaxPooling2D, Input
 from keras.layers import Input, Conv2D, UpSampling2D

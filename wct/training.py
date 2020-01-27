@@ -1,6 +1,6 @@
 import glob
 import numpy as np
-from tensorflow.keras.callbacks import ModelCheckpoint
+from keras.callbacks import ModelCheckpoint
 from .autoencoder import create_autoencoder, chain_models
 from .img import imread, resize
 

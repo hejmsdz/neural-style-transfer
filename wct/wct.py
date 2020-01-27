@@ -1,7 +1,7 @@
 import glob
 import cv2
 import numpy as np
-from tensorflow.keras.applications.vgg19 import preprocess_input
+from keras.applications.vgg19 import preprocess_input
 
 from .autoencoder import create_autoencoder, chain_models, transform
 from .img import imread, imshow

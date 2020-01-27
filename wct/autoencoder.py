@@ -1,8 +1,8 @@
 import keras
 import numpy as np
 from keras.layers import Lambda, Multiply, concatenate
-from tensorflow.keras import Model, Sequential
-from tensorflow.keras.layers import Input, UpSampling2D
+from keras import Model, Sequential
+from keras.layers import Input, UpSampling2D
 from .layers import ReflectingConv2D, unpool, VGG19
 
 
