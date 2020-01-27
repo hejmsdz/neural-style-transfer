@@ -73,15 +73,15 @@ def create_autoencoder(block):
     return encoder, decoder
 
 
-def chain_models(models):
-    first_input = models[0].input
-    last_output = models[0].output
-    for model in models[1:]:
-        last_output = model(last_output)
-    return Model(first_input, last_output)
-
 # def chain_models(models):
-#     return Sequential(models)
+#     first_input = models[0].input
+#     last_output = models[0].output
+#     for model in models[1:]:
+#         last_output = model(last_output)
+#     return Model(first_input, last_output)
+
+def chain_models(models):
+    return Sequential(models)
 
 
 def transform(model, array):
