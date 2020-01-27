@@ -14,13 +14,12 @@ def create_encoder(block):
     return VGG19(input_shape=(224, 224, 3), target_layer=block)
 
 
-def new_create_decoder(block, mask):
+def create_decoder(block, mask):
     return Decoder(input_shape=(14, 14, 512), target_layer=block, mask=mask) # TODO: Change size!!!
 
 
-def create_decoder(inputs_from_encoder, block, mask):
-    input_depth = [None, 64, 128, 256, 512, 512][block]
-    x = inputs_from_encoder
+def decoder_layers(inputs, block, mask):
+    x = inputs
 
     if block == 5:
         x = ReflectingConv2D(512, (3, 3), activation='relu', name='dec_block5_conv4')(x)
@@ -67,8 +66,7 @@ def create_decoder(inputs_from_encoder, block, mask):
     #         model.add(unpooled_layer)
     #
 
-    model = Model(inputs=inputs_from_encoder, outputs=x)
-    return model
+    return x
 
 
 def Decoder(input_tensor=None, input_shape=None, target_layer=1, mask=None):
@@ -77,14 +75,14 @@ def Decoder(input_tensor=None, input_shape=None, target_layer=1, mask=None):
     else:
         inputs = Input(tensor=input_tensor, shape=input_shape)
 
-    layers = create_decoder(inputs, target_layer, mask=mask)
+    layers = decoder_layers(inputs, target_layer, mask=mask)
     model = Model(inputs, layers, name='decoder')
     return model
 
 
 def create_autoencoder(block):
     encoder, masks = create_encoder(block)
-    decoder = new_create_decoder(block, masks)
+    decoder = create_decoder(block, masks)
     return encoder, decoder
 
 
