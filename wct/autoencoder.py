@@ -14,15 +14,16 @@ def create_encoder(block):
     return VGG19(input_shape=(224, 224, 3), target_layer=block)
 
 
-def create_decoder(block, mask):
-    return Decoder(input_shape=(14, 14, 512), target_layer=block, mask=mask) # TODO: Change size!!!
+# def create_decoder(block, mask):
+#     return Decoder(input_shape=(14, 14, 512), target_layer=block, mask=mask) # TODO: Change size!!!
 
 
-def decoder_layers(inputs, block, mask):
+def decoder_layers(block, mask):
+    inputs = Input(shape=(14, 14, 512))
     x = inputs
 
     if block == 5:
-        x = ReflectingConv2D(512, (3, 3), activation='relu', name='dec_block5_conv4')(x)
+        x = ReflectingConv2D(512, (3, 3), activation='relu', name='dec_block5_conv4')(inputs) # TODO: Fix inputs to allow block != 5 options
         x = ReflectingConv2D(512, (3, 3), activation='relu', name='dec_block5_conv3')(x)
         x = ReflectingConv2D(512, (3, 3), activation='relu', name='dec_block5_conv2')(x)
         x = ReflectingConv2D(512, (3, 3), activation='relu', name='dec_block5_conv1')(x)
@@ -66,23 +67,24 @@ def decoder_layers(inputs, block, mask):
     #         model.add(unpooled_layer)
     #
 
-    return x
+    return Model(inputs, x, name='decoder')
 
 
 def Decoder(input_tensor=None, input_shape=None, target_layer=1, mask=None):
-    if input_tensor is None:
-        inputs = Input(shape=input_shape)
-    else:
-        inputs = Input(tensor=input_tensor, shape=input_shape)
+    # if input_tensor is None:
+    #     inputs = Input(shape=input_shape)
+    # else:
+    #     inputs = Input(tensor=input_tensor, shape=input_shape)
+    #
+    # layers = decoder_layers(inputs, target_layer, mask=mask)
+    # model = Model(inputs, layers, name='decoder')
 
-    layers = decoder_layers(inputs, target_layer, mask=mask)
-    model = Model(inputs, layers, name='decoder')
-    return model
+    return decoder_layers(block=target_layer, mask=mask)
 
 
 def create_autoencoder(block):
     encoder, masks = create_encoder(block)
-    decoder = create_decoder(block, masks)
+    decoder = Decoder(target_layer=block, mask=masks)
     return encoder, decoder
 
 
