@@ -14,6 +14,10 @@ def create_encoder(block):
     return VGG19(input_shape=(224, 224, 3), target_layer=block)
 
 
+def new_create_decoder(block, mask):
+    return Decoder(input_shape=(14, 14, 512), target_layer=block, mask=mask) # TODO: Change size!!!
+
+
 def create_decoder(inputs_from_encoder, block, mask):
     input_depth = [None, 64, 128, 256, 512, 512][block]
     x = inputs_from_encoder
@@ -31,7 +35,7 @@ def create_decoder(inputs_from_encoder, block, mask):
         x = ReflectingConv2D(512, (3, 3), activation='relu', name='decoder_block4_conv3')(x)
         x = ReflectingConv2D(512, (3, 3), activation='relu', name='decoder_block4_conv2')(x)
         x = ReflectingConv2D(512, (3, 3), activation='relu', name='decoder_block4_conv1')(x)
-        # x = UpSampling2D((2, 2))(x)
+        x = UpSampling2D((2, 2))(x)
         x = Lambda(unpool)([x, mask[3]])
 
     if block >= 3:
@@ -39,19 +43,19 @@ def create_decoder(inputs_from_encoder, block, mask):
         x = ReflectingConv2D(256, (3, 3), activation='relu', name='decoder_block3_conv3')(x)
         x = ReflectingConv2D(256, (3, 3), activation='relu', name='decoder_block3_conv2')(x)
         x = ReflectingConv2D(256, (3, 3), activation='relu', name='decoder_block3_conv1')(x)
-        # x = UpSampling2D((2, 2))(x)
+        x = UpSampling2D((2, 2))(x)
         x = Lambda(unpool)([x, mask[2]])
 
     if block >= 2:
         x = ReflectingConv2D(128, (3, 3), activation='relu', name='decoder_block2_conv2')(x)
         x = ReflectingConv2D(128, (3, 3), activation='relu', name='decoder_block2_conv1')(x)
-        # x = UpSampling2D((2, 2))(x)
+        x = UpSampling2D((2, 2))(x)
         x = Lambda(unpool)([x, mask[1]])
 
     if block >= 1:
         x = ReflectingConv2D(64, (3, 3), activation='relu', name='decoder_block1_conv1')(x)
         x = ReflectingConv2D(64, (3, 3), activation='relu', name='decoder_block1_conv1')(x)
-        # x = UpSampling2D((2, 2))(x)
+        x = UpSampling2D((2, 2))(x)
         x = Lambda(unpool)([x, mask[0]])
 
     # model = Sequential([
@@ -67,9 +71,20 @@ def create_decoder(inputs_from_encoder, block, mask):
     return model
 
 
+def Decoder(input_tensor=None, input_shape=None, target_layer=1, mask=None):
+    if input_tensor is None:
+        inputs = Input(shape=input_shape)
+    else:
+        inputs = Input(tensor=input_tensor, shape=input_shape)
+
+    layers = create_decoder(inputs, target_layer, mask=mask)
+    model = Model(inputs, layers, name='decoder')
+    return model
+
+
 def create_autoencoder(block):
     encoder, masks = create_encoder(block)
-    decoder = create_decoder(encoder.output, block, masks)
+    decoder = new_create_decoder(block, masks)
     return encoder, decoder
 
 

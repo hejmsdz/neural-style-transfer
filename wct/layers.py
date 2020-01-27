@@ -18,23 +18,25 @@ WEIGHTS_PATH_NO_TOP = ('https://github.com/fchollet/deep-learning-models/'
 #     return keras.layers.multiply([mask, x])
 
 
-upsample2x2 = UpSampling2D((2, 2))
-
-
+# upsample2x2 = UpSampling2D((2, 2))
+#
+#
 # def unpool(args):
 #     x, input_mask = args
+#     print(input_mask)
 #     x = upsample2x2(x)
 #
 #     output_mask = np.zeros(x.shape[1] * x.shape[2])
 #     output_mask[input_mask] = 1.
 #     output_mask = output_mask.reshape(x.shape)
 #
-#     return tf.multiply(x, output_mask)
+#     return keras.layers.multiply([x, output_mask])
 
 
 def unpool(args):
     x, input_mask = args
-    return keras.layers.multiply([input_mask, UpSampling2D()(x)])
+    # return keras.layers.multiply([input_mask, UpSampling2D()(x)])
+    return keras.layers.multiply([input_mask, x])
 
 
 def mask_make(x, orig):
