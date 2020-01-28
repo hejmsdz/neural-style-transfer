@@ -1,5 +1,6 @@
 import glob
 import numpy as np
+import matplotlib.pyplot as plt 
 from keras.callbacks import ModelCheckpoint
 from .autoencoder import create_autoencoder
 from .img import imread, rgb2neural

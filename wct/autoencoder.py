@@ -13,12 +13,11 @@ def create_autoencoder(block, reencode=False):
     image = encoder.input
     encoded, *masks = encoder(image)
     decoded = decoder([encoded, *masks])
-    outputs = [encoded, decoded]
+    outputs = [decoded]
 
     if reencode:
         encoder2 = create_encoder(block)
-        reencoded, *_masks = encoder(decoded) # take image, discard masks
-        outputs.append(reencoded)
+        reencoded, *_masks = encoder(decoded)
 
     autoencoder = Model(image, outputs=outputs)
     if reencode:
