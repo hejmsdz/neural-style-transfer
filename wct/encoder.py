@@ -1,5 +1,5 @@
-from keras.layers import Input, Conv2D, MaxPooling2D
-from keras.models import Model
+from tensorflow.keras.layers import Input, Conv2D, MaxPooling2D
+from tensorflow.keras import Model
 from .layers.unpooling import MaskedMaxPooling2D
 
 def encoder_layers(block):

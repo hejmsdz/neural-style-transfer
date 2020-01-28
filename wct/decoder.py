@@ -1,5 +1,5 @@
-from keras.layers import Input, Conv2D, UpSampling2D, Lambda
-from keras.models import Model
+from tensorflow.keras.layers import Input, Conv2D, UpSampling2D, Lambda
+from tensorflow.keras import Model
 from .layers.unpooling import Unpooling2D
 from .layers.conv import ReflectingConv2D
 

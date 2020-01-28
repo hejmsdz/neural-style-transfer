@@ -1,4 +1,4 @@
-from keras.layers import MaxPooling2D, UpSampling2D, Reshape, Concatenate, Lambda, Multiply
+from tensorflow.keras.layers import MaxPooling2D, UpSampling2D, Reshape, Concatenate, Lambda, Multiply
 import keras.backend as K
 
 def MaskedMaxPooling2D(*args, **kwargs):

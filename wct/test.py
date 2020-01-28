@@ -1,5 +1,6 @@
 import numpy as np
 from .autoencoder import create_autoencoder
+from .img import imread, imshow, rgb2neural, neural2rgb
 
 from keras.utils import plot_model
 

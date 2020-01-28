@@ -1,5 +1,5 @@
-from keras.layers import Input
-from keras.models import Model
+from tensorflow.keras.layers import Input
+from tensorflow.keras import Model
 from .encoder import encoder_layers
 from .decoder import decoder_layers
 from .utils import load_vgg_weights

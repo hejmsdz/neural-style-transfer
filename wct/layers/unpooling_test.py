@@ -1,6 +1,6 @@
 import numpy as np
-from keras.models import Model
-from keras.layers import Input
+from tensorflow.keras import Model
+from tensorflow.keras.layers import Input
 from .unpooling import Unpooling2D, MaskedMaxPooling2D
 
 def create_model():
