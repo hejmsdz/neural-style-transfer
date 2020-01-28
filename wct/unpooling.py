@@ -8,6 +8,13 @@ def MaskedMaxPooling2D(*args, **kwargs):
         return output, mask
     return apply_layer
 
+def Unpooling2D(mask, *args, **kwargs):
+    def apply_layer(x):
+        x = UpSampling2D(*args, **kwargs)(x)
+        x = Lambda(unpool)([x, mask])
+        return x
+    return apply_layer
+
 def mask_make(x, orig):
     t = UpSampling2D()(x)
     _, a, b, c = orig.shape # TODO: make it work with fully convolutional architecture (unspecified input size)
