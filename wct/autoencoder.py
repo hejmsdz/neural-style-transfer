@@ -1,33 +1,33 @@
-from tensorflow.keras import Model, Sequential
-from tensorflow.keras.layers import Input, Conv2D, UpSampling2D
-from tensorflow.keras.applications import VGG19
+from tensorflow.keras.layers import Input
+from tensorflow.keras import Model
+from tensorflow.keras.losses import mean_squared_error
+import tensorflow.keras.backend as K
+from .encoder import create_encoder
+from .decoder import create_decoder
+from .utils import load_vgg_weights
 
-from .layers import ReflectingConv2D
+def create_autoencoder(block, reencode=False):
+    encoder = create_encoder(block)
+    decoder = create_decoder(block)
 
-encoder = VGG19(include_top=False, input_shape=(224, 224, 3))
-encoder.trainable = False
-# encoder.summary()
+    image = encoder.input
+    encoded, *masks = encoder(image)
+    decoded = decoder([encoded, *masks])
+    outputs = [decoded]
 
-layer_output = encoder.get_layer('block3_conv1').output
+    if reencode:
+        encoder2 = create_encoder(block)
+        reencoded, *_masks = encoder(decoded)
 
-def make_decoder(input_layer):
-    # block 3
-    x = ReflectingConv2D(128, (3, 3), activation='relu', name='dec_block3_conv1')(input_layer)
+    autoencoder = Model(image, outputs=outputs)
+    if reencode:
+        autoencoder.add_loss(content_feature_loss(image, encoded, decoded, reencoded))
+    return autoencoder
 
-    x = UpSampling2D(interpolation='nearest', name='dec_block3_upsample')(x)
-    x = ReflectingConv2D(128, (3, 3), activation='relu', name='dec_block3_conv2')(x)
+def content_feature_loss(content1, features1, content2, features2, feature_weight=1.0):
+    content_mse = mean_squared_error(content1, content2)
+    features_mse = mean_squared_error(features1, features2)
+    return K.mean(content_mse) + feature_weight * K.mean(features_mse)
 
-    # block 2
-    x = ReflectingConv2D(64, (3, 3), activation='relu', name='dec_block2_conv1')(x)
-    x = UpSampling2D(interpolation='nearest', name='dec_block2_upsample')(x)
-
-    # block 1
-    x = ReflectingConv2D(64, (3, 3), activation='relu', name='dec_block1_conv1')(x)
-
-    # output
-    x = ReflectingConv2D(3, 3, activation=None, name='dec_output')(x)
-    return x
-
-autoencoder = Model(encoder.input, outputs=[make_decoder(layer_output)])
-autoencoder.build((224, 224))
-autoencoder.summary()
+def transform(model, array):
+    return model.predict(np.array([array]))[0]
