@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt 
 from keras.callbacks import ModelCheckpoint
 from .autoencoder import create_autoencoder
-from .img import imread, rgb2neural
+from .img import imread, imshow, rgb2neural, neural2rgb
 
 def training_images(paths, batch_size, epochs=1):
     batches = [paths[pos : pos + batch_size] for pos in range(0, len(paths), batch_size)]
@@ -25,6 +25,14 @@ def draw_learning_curve(history, block):
     plt.ylabel('content + feature mse')
     plt.legend(['train', 'valid'], loc='upper left')
     plt.show()
+
+def test_autoencoder(img_path):
+    img = imread(img_path)
+    imgs = np.expand_dims(img, 0)
+    imgs = rgb2neural(imgs)
+    rebuilt = ae1.predict(imgs)[0]
+    rebuilt = neural2rgb(rebuilt)
+    imshow(np.column_stack([img, rebuilt]))
 
 def save_checkpoints(block, path):
     return ModelCheckpoint(
