@@ -15,25 +15,14 @@ def Unpooling2D(mask, *args, **kwargs):
         return x
     return apply_layer
 
-def mask_make(x, orig, name):
-    t = UpSampling2D()(x)
-    _, a, b, c = orig.shape # TODO: make it work with fully convolutional architecture (unspecified input size)
-    print("ORIGINAL:")
-    print(a, b, c)
-    xReshaped = Reshape((1, a * b * c))(t)
-    origReshaped = Reshape((1, a * b * c))(orig)
-    print("ENLARGED:")
-    print(xReshaped.shape)
-    print("ORIG ENLARGED:")
-    print(origReshaped.shape)
-    together = Concatenate(axis=-1, name=f"{name}_")([origReshaped, xReshaped])
-    togReshaped = Reshape((2, a, b, c))(together)
-    print("TOG RESHAPED:")
-    print(togReshaped.shape)
+def mask_make(post_pooling, pre_pooling, name):
+    upsampled = UpSampling2D()(post_pooling)
+    _, a, b, c = pre_pooling.shape # TODO: make it work with fully convolutional architecture (unspecified input size)
+    upsampled_flat = Reshape((1, a * b * c))(upsampled)
+    pre_pooling_flat = Reshape((1, a * b * c))(pre_pooling)
+    together = Concatenate(axis=-1)([pre_pooling_flat, upsampled_flat])
+    tog_reshaped = Reshape((2, a, b, c))(together)
 
-    bool_mask = Lambda(lambda t: K.greater_equal(t[:, 0], t[:, 1]), name=f"{name}_bool_mask")(togReshaped)
-
+    bool_mask = Lambda(lambda t: K.greater_equal(t[:, 0], t[:, 1]), name=f"{name}_bool_mask")(tog_reshaped)
     mask = Lambda(lambda t: K.cast(t, dtype='float32'), name=f"{name}_float_mask")(bool_mask)
-    print(mask.shape)
     return mask
-
