@@ -1,5 +1,12 @@
-from keras.layers import UpSampling2D, Reshape, Concatenate, Lambda, Multiply
+from keras.layers import MaxPooling2D, UpSampling2D, Reshape, Concatenate, Lambda, Multiply
 import keras.backend as K
+
+def MaskedMaxPooling2D(*args, **kwargs):
+    def apply_layer(x):
+        output = MaxPooling2D(*args, **kwargs)(x)
+        mask = mask_make(output, x)
+        return output, mask
+    return apply_layer
 
 def mask_make(x, orig):
     t = UpSampling2D()(x)

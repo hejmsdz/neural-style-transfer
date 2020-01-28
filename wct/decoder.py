@@ -3,9 +3,7 @@ from keras.models import Model
 from .unpooling import unpool
 from .layers import ReflectingConv2D
 
-def create_decoder(inputs, mask, block):
-    # inputs = Input(shape=(14, 14, 512))
-
+def decoder_layers(inputs, mask, block):
     x = inputs
 
     if block >= 4:
@@ -37,14 +35,3 @@ def create_decoder(inputs, mask, block):
         x = Lambda(unpool)([x, mask[0]])
     
     return x
-
-    # model = Sequential([
-    #     Input(shape=(None, None, input_depth))
-    # ])
-    # for i in range(block, 0, -1):
-    #     for layer in blocks[i]:
-    #         unpooled_layer = keras.layers.multiply([mask[i - 1], layer])
-    #         model.add(unpooled_layer)
-    #
-
-    # return Model(inputs, x, name='decoder')
