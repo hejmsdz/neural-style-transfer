@@ -26,11 +26,11 @@ def draw_learning_curve(history, block):
     plt.legend(['train', 'valid'], loc='upper left')
     plt.show()
 
-def test_autoencoder(img_path):
+def test_autoencoder(autoencoder, img_path):
     img = imread(img_path)
     imgs = np.expand_dims(img, 0)
     imgs = rgb2neural(imgs)
-    rebuilt = ae1.predict(imgs)[0]
+    rebuilt = autoencoder.predict(imgs)[0]
     rebuilt = neural2rgb(rebuilt)
     imshow(np.column_stack([img, rebuilt]))
 
