@@ -15,6 +15,16 @@ def training_images(paths, batch_size, epochs=1):
 def validation_images(paths):
     return list(training_images(paths, batch_size=len(paths), epochs=1))
 
+def draw_learning_curve(history, block):
+    plt.plot(history.history['loss'])
+    plt.plot(history.history['val_loss'])
+    plt.grid()
+    plt.title(f"Autoencoder loss at block {block}")
+    plt.xlabel('epoch')
+    plt.ylabel('content + feature mse')
+    plt.legend(['train', 'valid'], loc='upper left')
+    plt.show()
+
 def save_checkpoints(block, path):
     return ModelCheckpoint(
         f"{path}/decoder{block}.h5",
@@ -38,7 +48,8 @@ def train(block, train_path, valid_path=None, weights_path='models'):
         'validation_data': valid_files,
     }
     generator = training_images(train_files, batch_size, epochs)
-    autoencoder.fit(generator, **options)
+    history = autoencoder.fit(generator, **options)
+    return autoencoder, history
 
 if __name__ == '__main__':
     train_path = 'images/train/*.jpg'
