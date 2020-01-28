@@ -11,15 +11,15 @@ def training_images(paths, batch_size, epochs=1):
             images = np.array([imread(path) for path in batch])
             yield images, images
 
-def save_checkpoints(block):
+def save_checkpoints(block, path):
     return ModelCheckpoint(
-        f"models/26-01-2020/decoder{block}.h5",
+        f"{path}/decoder{block}.h5",
         monitor='loss',
         save_best_only=True,
         save_weights_only=True
     )
 
-def train(block):
+def train(block, images_path, weights_path):
     print(f"Training decoder at block {block}")
     autoencoder = create_autoencoder(block)
 
@@ -30,12 +30,13 @@ def train(block):
     options = {
         'epochs': epochs,
         'steps_per_epoch': len(paths) / batch_size,
-        'callbacks': [save_checkpoints(block)],
+        'callbacks': [save_checkpoints(block, weights_path)],
     }
     generator = training_images(paths, batch_size, epochs)
     autoencoder.fit_generator(generator, **options)
 
 if __name__ == '__main__':
+    images_path = 'images/train/*.jpg'
+    weights_path = 'models/2020-01-28'
     for i in [1, 2]:
-        train(i)
-    
+        train(i, images_path, weights_path)
