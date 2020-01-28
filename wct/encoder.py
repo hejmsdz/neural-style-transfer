@@ -1,7 +1,6 @@
 from keras.layers import Input, Conv2D, MaxPooling2D
 from keras.models import Model
 from .unpooling import MaskedMaxPooling2D
-from .utils import load_weights
 
 def encoder_layers(block):
     def apply_layers(x):
@@ -39,7 +38,7 @@ def encoder_layers(block):
         x = Conv2D(512, (3, 3), activation='relu', padding='same', name='block4_conv4')(x)
         x, mask = MaskedMaxPooling2D((2, 2), strides=(2, 2), name='block4_pool')(x)
         masks.append(mask)
-        
+
         if block == 4:
             return x, masks
 

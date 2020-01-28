@@ -10,4 +10,6 @@ for block in [1,2,3,4]:
     decoded = decoder_layers(block, masks)(encoded)
     ae = Model(image, decoded)
     ae.summary()
-    print(ae.predict(np.zeros((1, 224, 224, 3))))
+    input()
+    print(ae.predict(np.zeros((1, 224, 224, 3))).shape)
+    input()

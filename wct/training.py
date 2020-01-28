@@ -1,7 +1,7 @@
 import glob
 import numpy as np
 from keras.callbacks import ModelCheckpoint
-from .autoencoder import create_autoencoder, chain_models
+from .autoencoder import create_autoencoder
 from .img import imread, resize
 
 def training_images(paths, batch_size, epochs=1):
@@ -21,10 +21,7 @@ def save_checkpoints(block):
 
 def train(block):
     print(f"Training decoder at block {block}")
-    encoder, decoder = create_autoencoder(block)
-    # encoder.build((224, 224, 3))
-    # decoder.build((56, 56, 256))
-    autoencoder = chain_models([encoder, decoder])
+    autoencoder = create_autoencoder(block)
 
     autoencoder.compile(optimizer='adam', loss='mse')
     paths = glob.glob('images/train/*.jpg')
@@ -39,6 +36,6 @@ def train(block):
     autoencoder.fit_generator(generator, **options)
 
 if __name__ == '__main__':
-    for i in [5]:
+    for i in [1, 2]:
         train(i)
     
