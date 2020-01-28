@@ -2,13 +2,14 @@ import glob
 import numpy as np
 from keras.callbacks import ModelCheckpoint
 from .autoencoder import create_autoencoder
-from .img import imread, resize
+from .img import imread, rgb2neural
 
 def training_images(paths, batch_size, epochs=1):
     batches = [paths[pos : pos + batch_size] for pos in range(0, len(paths), batch_size)]
     for _ in range(epochs):
         for batch in batches:
             images = np.array([imread(path) for path in batch])
+            images = rgb2neural(images)
             yield images, images
 
 def save_checkpoints(block, path):
