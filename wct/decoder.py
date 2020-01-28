@@ -28,6 +28,8 @@ def decoder_layers(block, masks):
             x = ReflectingConv2D(64, (3, 3), activation='relu', name='decoder_block1_conv2')(x)
             x = ReflectingConv2D(64, (3, 3), activation='relu', name='decoder_block1_conv1')(x)
             x = Unpooling2D(masks[0], (2, 2), name='decoder_block1_unpool')(x)
+        
+        x = ReflectingConv2D(3, 3, activation=None, name='decoder_output')(x)
         return x
     
     return apply_layers
