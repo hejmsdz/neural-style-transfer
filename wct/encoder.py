@@ -3,16 +3,17 @@ from keras.models import Model
 from .unpooling import mask_make
 from .utils import load_weights
 
-def create_encoder(target_layer=1):
+def create_encoder(inputs, target_layer):
     """
     VGG19, up to the target layer (1 for relu1_1, 2 for relu2_1, etc.)
     """
-    inputs = Input(shape=(224, 224, 3))
+
+    x = inputs
 
     masks = []
     print("BLOCK 1:")
     # Block 1
-    x = Conv2D(64, (3, 3), activation='relu', padding='same', name='block1_conv1')(inputs)
+    x = Conv2D(64, (3, 3), activation='relu', padding='same', name='block1_conv1')(x)
     x = Conv2D(64, (3, 3), activation='relu', padding='same', name='block1_conv2')(x)
     orig = x
     x = MaxPooling2D((2, 2), strides=(2, 2), name='block1_pool')(x)
@@ -54,16 +55,8 @@ def create_encoder(target_layer=1):
     if target_layer == 4:
         return x, masks
 
-    print("BLOCK 5:")
-    # Block 5
-    x = Conv2D(512, (3, 3), activation='relu', padding='same', name='block5_conv1')(x)
-    x = Conv2D(512, (3, 3), activation='relu', padding='same', name='block5_conv2')(x)
-    x = Conv2D(512, (3, 3), activation='relu', padding='same', name='block5_conv3')(x)
-    x = Conv2D(512, (3, 3), activation='relu', padding='same', name='block5_conv4')(x)
-    orig = x
-    x = MaxPooling2D((2, 2), strides=(2, 2), name='block5_pool')(x)
-    masks.append(mask_make(x, orig))
+    return x, masks
 
-    model = Model(inputs, x, name='vgg19', trainable=False)
-    load_weights(model)
-    return model, masks
+    # model = Model(inputs, x, name='vgg19', trainable=False)
+    # load_weights(model)
+    # return model, masks
