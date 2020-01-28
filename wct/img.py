@@ -20,6 +20,7 @@ def neural2rgb(image):
     out[..., 0] += mean[0]
     out[..., 1] += mean[1]
     out[..., 2] += mean[2]
+    out = np.clip(out, 0, 255)
     return out
 
 def resize(image):
