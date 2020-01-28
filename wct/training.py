@@ -42,13 +42,12 @@ def save_checkpoints(block, path):
         save_weights_only=True
     )
 
-def train(block, train_path, valid_path=None, weights_path='models'):
+def train(block, train_path, valid_path=None, weights_path='models', epochs=10):
     print(f"Training decoder at block {block}")
     autoencoder = create_autoencoder(block, reencode=True)
     autoencoder.compile(optimizer='adam')
     train_files = glob.glob(train_path)
     valid_files = validation_images(glob.glob(valid_path)) if valid_path else None
-    epochs = 10
     batch_size = 10
     options = {
         'epochs': epochs,
