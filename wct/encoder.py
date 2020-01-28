@@ -1,6 +1,6 @@
 from keras.layers import Input, Conv2D, MaxPooling2D
 from keras.models import Model
-from .unpooling import MaskedMaxPooling2D
+from .layers.unpooling import MaskedMaxPooling2D
 
 def encoder_layers(block):
     def apply_layers(x):

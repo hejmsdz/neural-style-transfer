@@ -1,7 +1,7 @@
 from keras.layers import Input, Conv2D, UpSampling2D, Lambda
 from keras.models import Model
-from .unpooling import Unpooling2D
-from .layers import ReflectingConv2D
+from .layers.unpooling import Unpooling2D
+from .layers.conv import ReflectingConv2D
 
 def decoder_layers(block, masks):
     def apply_layers(x):
