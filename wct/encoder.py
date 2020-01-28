@@ -1,6 +1,14 @@
 from tensorflow.keras.layers import Input, Conv2D, MaxPooling2D
 from tensorflow.keras import Model
 from .layers.unpooling import MaskedMaxPooling2D
+from .utils import load_vgg_weights
+
+def create_encoder(block):
+    image = Input(shape=(224, 224, 3))
+    encoded, masks = encoder_layers(block)(image)
+    model = Model(inputs=[image], outputs=[encoded, *masks], name='encoder')
+    load_vgg_weights(model)
+    return model
 
 def encoder_layers(block):
     def apply_layers(x):

@@ -10,7 +10,7 @@ def training_images(paths, batch_size, epochs=1):
         for batch in batches:
             images = np.array([imread(path) for path in batch])
             images = rgb2neural(images)
-            yield images, images
+            yield images
 
 def validation_images(paths):
     return list(training_images(paths, batch_size=len(paths), epochs=1))
@@ -25,8 +25,8 @@ def save_checkpoints(block, path):
 
 def train(block, train_path, valid_path=None, weights_path='models'):
     print(f"Training decoder at block {block}")
-    autoencoder = create_autoencoder(block)
-    autoencoder.compile(optimizer='adam', loss='mse')
+    autoencoder = create_autoencoder(block, reencode=True)
+    autoencoder.compile(optimizer='adam')
     train_files = glob.glob(train_path)
     valid_files = validation_images(glob.glob(valid_path)) if valid_path else None
     epochs = 10
@@ -38,7 +38,7 @@ def train(block, train_path, valid_path=None, weights_path='models'):
         'validation_data': valid_files,
     }
     generator = training_images(train_files, batch_size, epochs)
-    autoencoder.fit_generator(generator, **options)
+    autoencoder.fit(generator, **options)
 
 if __name__ == '__main__':
     train_path = 'images/train/*.jpg'

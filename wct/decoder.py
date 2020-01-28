@@ -3,6 +3,14 @@ from tensorflow.keras import Model
 from .layers.unpooling import Unpooling2D
 from .layers.conv import ReflectingConv2D
 
+def create_decoder(block):
+    input_shape = [None, (112, 112, 64), (56, 56, 128), (28, 28, 256), (14, 14, 512)][block]
+    mask_shapes = [(224, 224, 64), (112, 112, 128), (56, 56, 256), (28, 28, 512)]
+    features = Input(shape=input_shape)
+    masks = [Input(shape=mask_shapes[i]) for i in range(block)]
+    decoded = decoder_layers(block, masks)(features)
+    return Model(inputs=[features, *masks], outputs=[decoded], name='decoder')
+
 def decoder_layers(block, masks):
     def apply_layers(x):
         if block >= 4:
