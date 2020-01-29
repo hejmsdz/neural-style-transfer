@@ -11,28 +11,33 @@ from .img import imread, imshow, rgb2neural, neural2rgb
 
 class WCT:
     def __init__(self):
-        self.blocks = [1, 2, 3, 4]
+        self.blocks = [2, 2, 2, 2]
         self.autoencoders = []
         self.load_autoencoders()
 
     def stylize(self, style, content, block=1):
-        style_features, _style_dims = WCT.flatten(self.encode(block, style))
-        content_features, content_dims = WCT.flatten(self.encode(block, content))
+        style_features_orig, style_masks = self.encode(block, style)
+        style_features, _style_dims = WCT.flatten(style_features_orig)
+
+        content_features_orig, content_masks = self.encode(block, content)
+        content_features, content_dims = WCT.flatten(content_features_orig)
 
         whitened_content_features = WCT.whitening_transform(content_features)
         stylized_features = WCT.coloring_transform(style_features, whitened_content_features)
         blended_stylized_features = WCT.blend(content_features, stylized_features)
 
-        return self.decode(block, WCT.unflatten(blended_stylized_features, content_dims))
+        return self.decode(block, WCT.unflatten(blended_stylized_features, content_dims), content_masks)
 
     def encode(self, block, image):
-        array = rgb2neural(image)
+        array = rgb2neural(np.expand_dims(image, 0))
         encoder = self.autoencoders[block - 1][0]
-        return encoder(array)
+        features, *masks = encoder.predict(array)
+        return features[0], masks
 
-    def decode(self, block, encoded, masks):
+    def decode(self, block, features, masks):
         decoder = self.autoencoders[block - 1][1]
-        return decoder([encoded, masks])
+        image = decoder.predict([np.expand_dims(features, 0), *masks])
+        return neural2rgb(image[0])
 
     def load_autoencoder(self, block, weights_path):
         encoder = create_encoder(block)
