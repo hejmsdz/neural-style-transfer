@@ -11,7 +11,7 @@ from .img import imread, imshow, rgb2neural, neural2rgb
 
 class WCT:
     def __init__(self):
-        self.blocks = [2, 2, 2, 2]
+        self.blocks = [1, 2, 3, 4]
         self.autoencoders = []
         self.load_autoencoders()
 
@@ -101,14 +101,14 @@ class WCT:
 
 if __name__ == '__main__':
     wct = WCT()
-    wct.test_autoencoders()
-    #
-    # rows = []
-    # for style_path in glob.glob('styles/*.jpg'):
-    #     style = imread(style_path)
-    #     content = imread('lena.png')
-    #     result = wct.stylize(style, content, block=2)
-    #     rows.append(np.column_stack([style, result]))
-    # results = np.row_stack(rows)
-    # cv2.imwrite('results.png', results * 255)
-    # imshow(results)
+    # wct.test_autoencoders()
+    
+    rows = []
+    for style_path in glob.glob('styles/*.jpg'):
+        style = imread(style_path)
+        content = imread('lena.png')
+        result = wct.stylize(style, content, block=2)
+        rows.append(np.column_stack([style, result]))
+    results = np.row_stack(rows)
+    cv2.imwrite('results.png', results * 255)
+    imshow(results)
